@@ -3,9 +3,10 @@ import { Container, Box, Button } from '@chakra-ui/react'
 import NotesList from './NotesList'
 import Modal from './Modal'
 import { useModal } from '../context/ModalContext'
+import AlertMessage from './Alert'
 
 const Notes = () => {
-  const {onCreate} = useModal()
+  const { onCreate } = useModal()
   return (
     <Container maxW={'100%'} display='flex' justifyContent={'center'}>
       <Container
@@ -16,10 +17,13 @@ const Notes = () => {
         maxW={'60%'}
       >
         <Box display={'flex'} justifyContent={'end'}>
-          <Button onClick={onCreate} colorScheme={'green'}>add notes</Button>
+          <Button onClick={onCreate} colorScheme={'green'}>
+            add notes
+          </Button>
         </Box>
-        <NotesList />
         <Modal />
+        <NotesList />
+        <AlertMessage />
       </Container>
     </Container>
   )

@@ -13,7 +13,7 @@ const ModalContextProvider = ({ children }) => {
     setData(items)
   }
   const onClose = () => {
-    setData(null)
+    setData({})
     close()
   }
   const onCreate = () => {

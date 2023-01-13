@@ -10,30 +10,25 @@ import {
 } from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom'
 import { useModal } from '../context/ModalContext'
-import { NotesContext } from '../context/NotesContext'
+import { useNotes } from '../context/NotesContext'
 
 const NotesList = () => {
   const navigate = useNavigate()
-  const [list, setList] = useContext(NotesContext)
   const { onUpdate } = useModal()
-
+  const { data, setData, onDelete } = useNotes()
   //update notes
-  const onEdit = (url, title, desc) => {
+  const onEdit = (id, image, title, description) => {
     onUpdate({
-      url,
+      id,
+      image,
       title,
-      desc,
+      description,
     })
   }
 
-  //delete notes
-  const onDelete = (id) => {
-    const newList = list.filter((items) => items.id !== id)
-    setList(newList)
-  }
   return (
     <Container mt={'50px'} maxW={'100%'}>
-      {list.map(({ id, url, title, desc }) => (
+      {data.map(({ id, image, title, description }) => (
         <Stack
           w={'100%'}
           display={'flex'}
@@ -49,16 +44,16 @@ const NotesList = () => {
             borderRadius={'5px'}
             mr={'12px'}
             objectFit='cover'
-            src={url}
+            src={image}
             alt='Dan Abramov'
           />
           <Box>
             <Heading m={0} size={'md'}>
               {title}
             </Heading>
-            <Text my={'1'}>{desc}</Text>
+            <Text my={'1'}>{description}</Text>
             <Button
-              onClick={() => onEdit(url, title, desc)}
+              onClick={() => onEdit(id, image, title, description)}
               colorScheme={'purple'}
             >
               edit

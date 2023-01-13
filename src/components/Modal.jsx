@@ -12,30 +12,34 @@ import {
   ModalOverlay,
   Textarea,
 } from '@chakra-ui/react'
-import { useState, useContext } from 'react'
+import { useEffect, useState } from 'react'
 import { useModal } from '../context/ModalContext'
-import { NotesContext } from '../context/NotesContext'
+import { useNotes } from '../context/NotesContext'
 
 function OpenModal() {
-  const { isOpen, onClose, data } = useModal()
   const [urlValue, setUrlValue] = useState('')
   const [titleValue, setTitleValue] = useState('')
   const [descValue, setDescValue] = useState('')
-  const [list, setList] = useContext(NotesContext)
-
+  const { saveNotes } = useNotes()
+  const { isOpen, onClose, data } = useModal()
   //save notes
-  const onSave = () => {
-    setList([
-      ...list,
-      {
-        id: new Date().getMilliseconds(),
-        url: urlValue,
-        title: titleValue,
-        desc: descValue,
-      },
-    ])
+  useEffect(() => {
+    if (Object.keys(data).length !== 0) {
+      setUrlValue(data.image)
+      setTitleValue(data.title)
+      setDescValue(data.desccription)
+    }
+  }, [data])
+  const save = () => {
+    saveNotes({
+      id: data.id, // ? data.id : new Date().getMilliseconds(),
+      title: titleValue,
+      image: urlValue,
+      description: descValue,
+    })
     onClose()
   }
+
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -69,13 +73,13 @@ function OpenModal() {
               <FormLabel>Your Notes</FormLabel>
               <Textarea
                 onChange={(e) => setDescValue(e.target.value)}
-                defaultValue={data?.desc}
+                defaultValue={data?.description}
               />
             </FormControl>
           </ModalBody>
 
           <ModalFooter>
-            <Button onClick={() => onSave()} colorScheme='blue' mr={3}>
+            <Button onClick={() => save()} colorScheme='blue' mr={3}>
               Save
             </Button>
             <Button onClick={onClose}>Cancel</Button>
