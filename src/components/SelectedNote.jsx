@@ -8,16 +8,27 @@ import {
   Button,
   ButtonGroup,
 } from '@chakra-ui/react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import MainService from '../service/mainService'
 
 const SelectedNote = () => {
   const { id } = useParams()
   const navigate = useNavigate()
-  const [items, setItems] = useState()
+  const [items, setItems] = useState({})
+  useEffect(() => {
+    getNote()
+  }, [id])
+  const getNote = async () => {
+    try {
+      const note = await MainService.getNote(id.replace(':', ''))
+      return setItems(note.data)
+    } catch (e) {
+      throw e
+    }
+  }
   return (
     <div>
-      SelectedNote: {id}
       <Container maxW='100%' centerContent>
         <Stack
           bg={'rgba(0, 0, 0, 0.101)'}
@@ -33,23 +44,16 @@ const SelectedNote = () => {
               borderRadius={'5px'}
               mr={'12px'}
               objectFit='cover'
-              src={items?.url || 'https://bit.ly/dan-abramov'}
+              src={items?.image}
               alt='Dan Abramov'
             />
           </Box>
           <Box>
             <Heading m={0} textAlign={'center'} size={'md'}>
-              {items?.title || 'notes title'}
+              {items?.title}
             </Heading>
-            <Text my={'1'}>
-              {items?.desc ||
-                'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Magnam incidunt odio facilis pariatur libero alias quam sit illum accusamus minus? Cupiditate id hic iusto rerum ratione nesciunt doloremque! Deserunt eum assumenda distinctio saepe dolorum laborum rem possimus id quam! Velit vitae placeat sunt pariatur error quod tempore distinctio vel mollitia.'}
-            </Text>
+            <Text my={'1'}>{items?.description}</Text>
             <ButtonGroup mt={5}>
-              <Button colorScheme={'purple'}>edit</Button>
-              <Button ml={2} colorScheme={'red'}>
-                delete
-              </Button>
               <Button onClick={() => navigate(-1)} ml={2} colorScheme={'gray'}>
                 go back
               </Button>

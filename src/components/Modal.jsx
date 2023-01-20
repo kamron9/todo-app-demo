@@ -20,9 +20,10 @@ function OpenModal() {
   const [urlValue, setUrlValue] = useState('')
   const [titleValue, setTitleValue] = useState('')
   const [descValue, setDescValue] = useState('')
+  const [err, setErr] = useState(false)
   const { saveNotes } = useNotes()
   const { isOpen, onClose, data } = useModal()
-  //save notes
+
   useEffect(() => {
     if (Object.keys(data).length !== 0) {
       setUrlValue(data.image)
@@ -30,14 +31,20 @@ function OpenModal() {
       setDescValue(data.desccription)
     }
   }, [data])
+
+  //save notes
   const save = () => {
-    saveNotes({
-      id: data.id, // ? data.id : new Date().getMilliseconds(),
-      title: titleValue,
-      image: urlValue,
-      description: descValue,
-    })
-    onClose()
+    if (urlValue.length === 0 || descValue.length === 0) {
+      setErr(true)
+    } else {
+      saveNotes({
+        id: data.id,
+        title: titleValue,
+        image: urlValue,
+        description: descValue,
+      })
+      onClose()
+    }
   }
 
   return (
@@ -52,10 +59,12 @@ function OpenModal() {
             <FormControl>
               <FormLabel>Notes Image</FormLabel>
               <Input
-                onChange={(e) => setUrlValue(e.target.value)}
+                onChange={(e) => setUrlValue(e.target.files[0])}
                 p={'1px'}
+                src={urlValue}
                 border={'none'}
                 type={'file'}
+                accept={'.png, .jpg, .jpeg'}
               />
             </FormControl>
 
@@ -76,8 +85,8 @@ function OpenModal() {
                 defaultValue={data?.description}
               />
             </FormControl>
+            {err && <p style={{ color: 'red' }}>please fill on input</p>}
           </ModalBody>
-
           <ModalFooter>
             <Button onClick={() => save()} colorScheme='blue' mr={3}>
               Save

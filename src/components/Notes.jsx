@@ -4,9 +4,12 @@ import NotesList from './NotesList'
 import Modal from './Modal'
 import { useModal } from '../context/ModalContext'
 import AlertMessage from './Alert'
+import { useNotes } from '../context/NotesContext'
 
 const Notes = () => {
   const { onCreate } = useModal()
+  const { fullfilled, setFullfilled } = useNotes()
+  setTimeout(() => setFullfilled(false), 2000)
   return (
     <Container maxW={'100%'} display='flex' justifyContent={'center'}>
       <Container
@@ -23,7 +26,7 @@ const Notes = () => {
         </Box>
         <Modal />
         <NotesList />
-        <AlertMessage />
+        {fullfilled && <AlertMessage />}
       </Container>
     </Container>
   )
